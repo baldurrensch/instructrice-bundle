@@ -60,24 +60,10 @@ class InstructriceExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $mergedConfig, ContainerBuilder $container): void
     {
-        $apiKeys = [
-            Anthropic::class => $mergedConfig['anthropic']['api_key'] ?? null,
-            Anyscale::class => $mergedConfig['anyscale']['api_key'] ?? null,
-            DeepInfra::class => $mergedConfig['deepinfra']['api_key'] ?? null,
-            Fireworks::class => $mergedConfig['fireworks']['api_key'] ?? null,
-            Groq::class => $mergedConfig['groq']['api_key'] ?? null,
-            Mistral::class => $mergedConfig['mistral']['api_key'] ?? null,
-            Ollama::class => $mergedConfig['ollama']['api_key'] ?? null,
-            OpenAi::class => $mergedConfig['openai']['api_key'] ?? null,
-            Perplexity::class => $mergedConfig['perplexity']['api_key'] ?? null,
-            Together::class => $mergedConfig['together']['api_key'] ?? null,
-        ];
-
         $definition = $container->register(Instructrice::class);
         $definition->setFactory(InstructriceFactory::class . '::create');
 
         $definition->setArguments([
-            '$apiKeys' => $apiKeys,
             '$llmFactory' => new Reference(LLMFactory::class),
             '$serializer' => new Reference('serializer'),
             '$propertyInfo' => new Reference('property_info'),
@@ -93,7 +79,18 @@ class InstructriceExtension extends ConfigurableExtension
         $definition->setArguments([
             '$client' => new Reference(SymfonyStreamingClient::class),
             '$logger' => new Reference('logger'),
-            '$apiKeys' => $apiKeys,
+            '$apiKeys' => [
+                Anthropic::class => $mergedConfig['anthropic']['api_key'] ?? null,
+                Anyscale::class => $mergedConfig['anyscale']['api_key'] ?? null,
+                DeepInfra::class => $mergedConfig['deepinfra']['api_key'] ?? null,
+                Fireworks::class => $mergedConfig['fireworks']['api_key'] ?? null,
+                Groq::class => $mergedConfig['groq']['api_key'] ?? null,
+                Mistral::class => $mergedConfig['mistral']['api_key'] ?? null,
+                Ollama::class => $mergedConfig['ollama']['api_key'] ?? null,
+                OpenAi::class => $mergedConfig['openai']['api_key'] ?? null,
+                Perplexity::class => $mergedConfig['perplexity']['api_key'] ?? null,
+                Together::class => $mergedConfig['together']['api_key'] ?? null,
+            ],
         ]);
 
         $container->setAlias('instructrice', Instructrice::class);
